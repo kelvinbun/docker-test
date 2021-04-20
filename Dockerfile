@@ -1,3 +1,5 @@
-FROM tomcat:8
-# Take the war and copy to webapps of tomcat
-COPY target/*.war /usr/local/tomcat/webapps/myweb.war
+FROM php:7-apache
+
+RUN a2enmod rewrite
+
+CMD ["start-apache"]
