@@ -1,10 +1,35 @@
-node{
-   stage('SCM Checkout'){
-       git credentialsId: 'git-creds', url: 'https://github.com/shayonara/docker-test'
-   }
-   stage('Mvn Package'){
-     def mvnHome = tool name: 'maven-3', type: 'maven'
-     def mvnCMD = "${mvnHome}/bin/mvn"
-     sh "${mvnCMD} clean package"
-   }
+
+pipeline {
+  environment {
+    imagename = "kelvinbun22/php-test"
+    registryCredential = 'dockerHub'
+    dockerImage = ''
+  }
+  agent any
+  stages {
+    stage('Cloning Git') {
+      steps {
+        git([url: 'https://github.com/kelvinbun/docker-test.git', branch: 'master', credentialsId: 'ismailyenigul-github-user-token'])
+
+      }
+    }
+    stage('Building image') {
+      steps{
+        script {
+          dockerImage = docker.build imagename
+        }
+      }
+    }
+    stage('Deploy Image') {
+      steps{
+        script {
+          docker.withRegistry( '', registryCredential ) {
+            dockerImage.push("$BUILD_NUMBER")
+             dockerImage.push('latest')
+
+          }
+        }
+      }
+    }
+  }
 }
