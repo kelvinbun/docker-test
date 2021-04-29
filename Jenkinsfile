@@ -39,7 +39,9 @@ pipeline {
     }
     stage('Run Docker'){
     steps{
-      sh "docker -H ssh://root@192.168.20.178 run -d -p 8080:80 $imagename"
+      sshagent (credentials: ['deploy_user']) {
+          sh "ssh -vvv -o StrictHostKeyChecking=no -T jenks@192.168.20.178 && docker run --name php -d -p 8080:80 kelvinbun22/php-test"
+        }
       }
     }
   }
