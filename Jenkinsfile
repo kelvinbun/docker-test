@@ -37,5 +37,8 @@ pipeline {
 
       }
     }
+    stage('Run Docker'){
+    steps{
+      sh "docker -H ssh://root@192.168.20.178 run -d -p 8080:80 $imagename"
   }
 }
